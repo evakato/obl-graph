@@ -36,17 +36,11 @@ while (queue.length !== 0) {
     for (let j: number = 0; j < 4; j++) {
       for (let s: number = 0; s < 2; s++) {
         if (!(i === 0 && j === 0) && !(i === 2 && j === 2)) {
+
           let newCase: Case = currentCase.audf(i, j).slice(s);
-
-          /*
-          console.log("bitch i caught the case");
-          visitedCases.forEach(eachCase => eachCase.print());
-          console.log("newcase: ");
-          newCase.print();
-          */
-
           let index: number = -1;
           let offset: Array<number> = null!;
+
           visitedCases.every((eachCase, id) => {
               offset = eachCase.equals(newCase);
               if (offset) {
