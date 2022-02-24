@@ -1,9 +1,17 @@
-import Case from './Case';
 import Move from './Move';
+
+// src: https://stackoverflow.com/a/12646864
+function shuffleArray(array: Array<any>): Array<any> {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
 
 export default class Graph {
     private size: number;
-    private adjMatrix: Array<Array<Move>>;
+    private adjMatrix: Array<Array<Array<Move>>>;
 
     constructor () {
         this.size = 0;
@@ -11,8 +19,16 @@ export default class Graph {
     }
 
     addEdge(u: number, v: number, w:Move): void {
-        this.adjMatrix[u][v] = w;
-        this.adjMatrix[v][u] = w;
+        this.adjMatrix[u][v] = [w];
+        //this.adjMatrix[v][u] = w;
+    }
+
+    addMoveToEdge(u: number, v: number, w:Move): void {
+        if (this.adjMatrix[u][v] === null) {
+            this.adjMatrix[u][v] = [w];
+        } else {
+            this.adjMatrix[u][v].push(w);
+        }
     }
 
     addVertex(): void {
@@ -34,6 +50,7 @@ export default class Graph {
             let vertex: number = couple[0];
             let path: Array<number> = couple[1];
             visited[vertex] = true;
+            let randomQueue: Array<Array<any>> = [];
 
             for (let i: number = 0; i < this.adjMatrix[vertex].length; i++) {
                 if (this.adjMatrix[vertex][i] != null) {
@@ -41,15 +58,17 @@ export default class Graph {
                         let newPath: Array<number> = [...path];
                         newPath.push(v);
                         return newPath;
-                    }
-                    if (visited[i] === false) {
+                    } else if (visited[i] === false) {
                         visited[i] = true;
                         let newPath: Array<number> = [...path];
                         newPath.push(i);
-                        queue.push([i, newPath])
+                        randomQueue.push([i, newPath])
                     }
                 }
             }
+            randomQueue = shuffleArray(randomQueue);
+            queue = queue.concat(randomQueue);
+            //console.log(queue);
 
         }
         return [];
@@ -60,10 +79,10 @@ export default class Graph {
             let row: string = '';
             for (let j: number = 0; j < this.size; j++) {
                 if (this.adjMatrix[i][j] !== null) {
-                row += "i: " + i + "j: " + j;
-                row += ` ${this.adjMatrix[i][j].getTop()}`;
-                row += ` ${this.adjMatrix[i][j].getBottom()}`;
-                row += ` ${this.adjMatrix[i][j].getSlice()}`;
+                row += "i: " + i + "j: " + j + "\t";
+                //row += ` ${this.adjMatrix[i][j].getTop()}`;
+                //row += ` ${this.adjMatrix[i][j].getBottom()}`;
+                //row += ` ${this.adjMatrix[i][j].getSlice()}`;
                 }
             }
             console.log(row);
@@ -71,7 +90,7 @@ export default class Graph {
     }
 
     getMove(u: number, v: number): Move {
-        return this.adjMatrix[u][v];
+        return this.adjMatrix[u][v][Math.floor(Math.random()*this.adjMatrix[u][v].length)];
     }
 
 }
