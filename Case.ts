@@ -88,8 +88,8 @@ export default class Case {
     }
 
     arrayEquals(a: Array<number>, b: Array<number>): boolean {
-        a.sort();
-        b.sort();
+        a = a.sort();
+        b = b.sort();
         return a.every((val, index) => val === b[index]);
     }
 
